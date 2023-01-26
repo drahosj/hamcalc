@@ -2,7 +2,7 @@ import std.stdio;
 
 import dlangui;
 
-import inductor_ui;
+import ui.inductor_ui;
 
 mixin APP_ENTRY_POINT;
 

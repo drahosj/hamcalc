@@ -1,4 +1,4 @@
-module ui;
+module ui.inductor_ui;
 
 import std.conv;
 
@@ -25,7 +25,7 @@ auto inductor_window_ml = q{
         }
         HorizontalLayout {
             TextWidget { text: "Inductance (uH):" }
-            TextWidget { id: inductanceOutput; text: "N/A" }
+            TextWidget { id: inductanceOutput; text: "" }
         }
         HorizontalLayout {
             layoutWidth: FILL_PARENT
@@ -35,7 +35,12 @@ auto inductor_window_ml = q{
         }
         HorizontalLayout {
             TextWidget { text: "Reactance (ohms):" }
-            TextWidget { id: reactanceOutput; text: "N/A" }
+            TextWidget { id: reactanceOutput; text: "" }
+        }
+        HorizontalLayout {}
+        HorizontalLayout {
+            TextWidget { text: "Resonant capacitance (nF):" }
+            TextWidget { id: capacitanceOutput; text: "" }
         }
         HorizontalLayout {
             layoutWidth: FILL_PARENT
@@ -78,8 +83,10 @@ void updateInductance(Widget main)
 
     auto f = getInput!double(main, "frequencyInput", 0).megahertz;
     auto newX_L = InductiveReactance(newL, f);
+    auto newC = ResonantCapacitance(newL, f);
     main.childById!TextWidget("reactanceOutput").text = newX_L.johms.to!dstring;
-
+    main.childById!TextWidget("capacitanceOutput").text = 
+        newC.nanofarads.to!dstring;
 }
 
 void solveInductance(Widget main)
