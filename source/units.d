@@ -39,6 +39,7 @@ mixin Quantity!("Inductance", "henries", double);
 mixin Quantity!("Frequency", "hertz", double);
 mixin Quantity!("Resistance", "ohms", double);
 mixin Quantity!("Reactance", "johms", double);
+mixin Quantity!("Capacitance", "farads", double);
 
 struct Impedance {
     Complex!double ohms;

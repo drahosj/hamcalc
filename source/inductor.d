@@ -32,6 +32,11 @@ Reactance ToroidReactance(double a_l, double turns, Frequency f)
     return InductiveReactance(ToroidInductance(a_l, turns), f);
 }
 
+Capacitance ResonantCapacitance(Inductance l, Frequency f)
+{
+    return (1.0 / (pow(f.rad_s, 2) * l.henries)).farads;
+}
+
 unittest {
     import std.stdio;
     writeln("A_L = 11 nH/turns^2");
@@ -81,4 +86,10 @@ unittest {
             ToroidReactance(20, i, 24.megahertz).johms,
             ToroidReactance(20, i, 7.megahertz).johms);
     }
+
+    writeln();
+    writefln("Capacitor to resonate 20 nH inductor at 14 MHz (nF): %s",
+            20.nanohenries.ResonantCapacitance(14.megahertz).nanofarads);
+    writefln("Capacitor to resonate 20 nH inductor at 7 MHz (nF): %s",
+            20.nanohenries.ResonantCapacitance(7.megahertz).nanofarads);
 }
