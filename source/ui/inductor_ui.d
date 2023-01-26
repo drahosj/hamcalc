@@ -1,3 +1,5 @@
+module ui;
+
 import std.conv;
 
 import dlangui;

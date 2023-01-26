@@ -13,3 +13,4 @@ hamcalc-test-*
 *.o
 *.obj
 *.lst
+*.swp
