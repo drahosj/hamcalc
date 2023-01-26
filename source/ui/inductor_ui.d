@@ -6,6 +6,7 @@ import dlangui;
 
 import units;
 import inductor;
+import ui.util;
 
 auto inductor_window_ml = q{
     TableLayout {
@@ -60,28 +61,17 @@ auto inductor_window_ml = q{
 };
 
 
-T getInput(T)(Widget main, string id, T def = T.init)
-{
-    auto w = main.childById!EditLine(id);
-    try {
-        return w.text.to!T;
-    } catch (ConvException) {
-        w.text = def.to!dstring;
-        return T.init;
-    }
-}
-
 void updateInductance(Widget main)
 {
-    auto a_l = getInput!double(main, "a_lInput", 0);
-    auto turns = getInput!double(main, "turnsInput", 0);
+    auto a_l = getInput!double(main, "a_lInput");
+    auto turns = getInput!double(main, "turnsInput");
 
     auto newL = ToroidInductance(a_l, turns);
 
     main.childById!TextWidget("inductanceOutput").text =
         newL.microhenries.to!dstring;
 
-    auto f = getInput!double(main, "frequencyInput", 0).megahertz;
+    auto f = getInput!double(main, "frequencyInput").megahertz;
     auto newX_L = InductiveReactance(newL, f);
     auto newC = ResonantCapacitance(newL, f);
     main.childById!TextWidget("reactanceOutput").text = newX_L.johms.to!dstring;
@@ -91,7 +81,7 @@ void updateInductance(Widget main)
 
 void solveInductance(Widget main)
 {
-    auto a_l = getInput!double(main, "a_lInput", 0);
+    auto a_l = getInput!double(main, "a_lInput");
     auto targetL = getInput!double(main, "inductanceInput").microhenries;
     auto turns = ToroidTurns(targetL, a_l);
 
@@ -101,8 +91,8 @@ void solveInductance(Widget main)
 void solveReactance(Widget main)
 {
 
-    auto a_l = getInput!double(main, "a_lInput", 0);
-    auto f = getInput!double(main, "frequencyInput", 0).megahertz;
+    auto a_l = getInput!double(main, "a_lInput");
+    auto f = getInput!double(main, "frequencyInput").megahertz;
     auto targetX = getInput!double(main, "reactanceInput").johms;
 
     auto turns = ToroidTurns(targetX, f, a_l);
@@ -110,30 +100,18 @@ void solveReactance(Widget main)
     main.childById!EditLine("turnsInput").text = turns.to!dstring;
 }
 
-class UpdateWrapper : EditableContentChangeListener {
-    void delegate() updateHandler;
-
-    this (void delegate() _updateHandler) {
-        updateHandler = _updateHandler;
-    }
-
-    void onEditableContentChanged(EditableContent source) {
-        updateHandler();
-    }
-}
-
 bool showInductorWindow(Window mainWin)
 {
     auto win = Platform.instance.createWindow("Inductor Calc", mainWin);   
     win.mainWidget = parseML(inductor_window_ml);
     auto mw = win.mainWidget;
-    auto wrapper = new UpdateWrapper(delegate() {
-            updateInductance(mw);
-    });
 
-    mw.childById!EditLine("a_lInput").contentChange = wrapper;
-    mw.childById!EditLine("turnsInput").contentChange = wrapper;
-    mw.childById!EditLine("frequencyInput").contentChange = wrapper;
+    static foreach(id; ["a_lInput", "turnsInput", "frequencyInput"]) {
+        mw.childById!EditLine(id).contentChange = 
+            new EditableContentChangeWrapper!(void delegate())(delegate() {
+                updateInductance(mw);
+        });
+    }
 
     mw.childById!Button("solveFromInductance").click = delegate(Widget w) {
         solveInductance(mw);
