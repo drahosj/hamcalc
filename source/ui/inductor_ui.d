@@ -35,7 +35,7 @@ auto inductor_window_ml = q{
             EditLine { id: frequencyInput }
         }
         HorizontalLayout {
-            TextWidget { text: "Reactance (ohms):" }
+            TextWidget { text: "Reactance (ohm):" }
             TextWidget { id: reactanceOutput; text: "" }
         }
         HorizontalLayout {}
@@ -52,7 +52,7 @@ auto inductor_window_ml = q{
         Button { id: solveFromInductance; text: "Solve" }
         HorizontalLayout {
             layoutWidth: FILL_PARENT
-            TextWidget { text: "Desired Reactance (ohms)" }
+            TextWidget { text: "Desired Reactance (ohm)" }
             HSpacer {}
             EditLine { id: reactanceInput }
         }
@@ -83,16 +83,16 @@ void updateInductance(Widget main)
     auto newL = ToroidInductance(a_l, turns);
 
     main.childById!TextWidget("inductanceOutput").text =
-        newL.microhenries.to!dstring;
+        newL.microhenry.to!dstring;
 
     auto f = getInput!double(main, "frequencyInput").megahertz;
     auto newX_L = InductiveReactance(newL, f);
     auto newC = ResonantCapacitance(newL, f);
-    main.childById!TextWidget("reactanceOutput").text = newX_L.johms.to!dstring;
+    main.childById!TextWidget("reactanceOutput").text = newX_L.johm.to!dstring;
     main.childById!TextWidget("capacitanceOutput").text = 
-        newC.nanofarads.to!dstring;
+        newC.nanofarad.to!dstring;
 
-    auto inputC = getInput!double(main, "capacitanceInput").nanofarads;
+    auto inputC = getInput!double(main, "capacitanceInput").nanofarad;
     auto resF = ResonantFrequency(newL, inputC);
     main.childById!TextWidget("frequencyOutput").text = 
         resF.megahertz.to!dstring;
@@ -101,7 +101,7 @@ void updateInductance(Widget main)
 void solveInductance(Widget main)
 {
     auto a_l = getInput!double(main, "a_lInput");
-    auto targetL = getInput!double(main, "inductanceInput").microhenries;
+    auto targetL = getInput!double(main, "inductanceInput").microhenry;
     auto turns = ToroidTurns(targetL, a_l);
 
     main.childById!EditLine("turnsInput").text = turns.to!dstring;
@@ -112,7 +112,7 @@ void solveReactance(Widget main)
 
     auto a_l = getInput!double(main, "a_lInput");
     auto f = getInput!double(main, "frequencyInput").megahertz;
-    auto targetX = getInput!double(main, "reactanceInput").johms;
+    auto targetX = getInput!double(main, "reactanceInput").johm;
 
     auto turns = ToroidTurns(targetX, f, a_l);
 
@@ -122,12 +122,12 @@ void solveReactance(Widget main)
 void solveFrequency(Widget main)
 {
     auto f = main.getInput!double("frequencyInput").megahertz;
-    auto c = main.getInput!double("capacitanceInput").nanofarads;
+    auto c = main.getInput!double("capacitanceInput").nanofarad;
 
     auto x_l = ResonantInductance(c, f);
 
     main.childById!EditLine("inductanceInput").text = 
-        x_l.microhenries.to!dstring;
+        x_l.microhenry.to!dstring;
 }
 
 bool showInductorWindow(Window mainWin)

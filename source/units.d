@@ -35,27 +35,27 @@ mixin template Quantity(string quantity, string unit, B)
     mixin CommonPrefixes!(quantity, unit, B);
 }
 
-mixin Quantity!("Inductance", "henries", double);
+mixin Quantity!("Inductance", "henry", double);
 mixin Quantity!("Frequency", "hertz", double);
-mixin Quantity!("Resistance", "ohms", double);
-mixin Quantity!("Reactance", "johms", double);
-mixin Quantity!("Capacitance", "farads", double);
+mixin Quantity!("Resistance", "ohm", double);
+mixin Quantity!("Reactance", "johm", double);
+mixin Quantity!("Capacitance", "farad", double);
 
 struct Impedance {
-    Complex!double ohms;
-    alias ohms this;
+    Complex!double ohm;
+    alias ohm this;
 
     this (Resistance r, Reactance i)
     {
-        this(Complex!double(r.ohms, i.johms));
+        this(Complex!double(r.ohm, i.johm));
     }
     
     this (Complex!double c) {
-        ohms = c;
+        ohm = c;
     }
 }
 
-mixin CommonPrefixes!("Impedance", "ohms", Complex!double);
+mixin CommonPrefixes!("Impedance", "ohm", Complex!double);
 
 double rad_s(Frequency f)
 {
@@ -69,17 +69,17 @@ Frequency rad_s(double f)
 
 unittest {
     static assert(is(typeof(200.megahertz) == Frequency));
-    static assert(is(typeof(200.nanohenries) == Inductance));
-    static assert(is(typeof(200.nanohenries.microhenries) == double));
-    static assert(is(typeof(200.nanohenries) == Inductance));
-    static assert(is(typeof(200.ohms) == Resistance));
+    static assert(is(typeof(200.nanohenry) == Inductance));
+    static assert(is(typeof(200.nanohenry.microhenry) == double));
+    static assert(is(typeof(200.nanohenry) == Inductance));
+    static assert(is(typeof(200.ohm) == Resistance));
 
     bool floatCompare(T)(T a, T b)
     {
         return(abs(a - b) < 1e-15);
     }
 
-    assert(floatCompare(200000.nanohenries, 200.microhenries));
-    assert(!floatCompare(200000.nanohenries, 201.microhenries));
-    assert(200000.nanohenries.henries == 200e-6);
+    assert(floatCompare(200000.nanohenry, 200.microhenry));
+    assert(!floatCompare(200000.nanohenry, 201.microhenry));
+    assert(200000.nanohenry.henry == 200e-6);
 }
