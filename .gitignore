@@ -14,3 +14,6 @@ hamcalc-test-*
 *.obj
 *.lst
 *.swp
+ui.log
+*.dll
+*.pdb
