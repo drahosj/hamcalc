@@ -57,14 +57,28 @@ auto inductor_window_ml = q{
             EditLine { id: reactanceInput }
         }
         Button { id: solveFromReactance; text: "Solve" }
+        HorizontalLayout {
+            layoutWidth: FILL_PARENT
+            TextWidget { text: "Capacitance (nF)" }
+            HSpacer{}
+            EditLine { id: capacitanceInput }
+        }
+        HorizontalLayout {
+            TextWidget { text: "Resonant frequency (MHz):" }
+            TextWidget { id: frequencyOutput; text: "" }
+        }
+        HorizontalLayout { 
+            TextWidget { text: "Solve Inductor from Capacitor" }
+        }
+        Button { id: solveFromFrequency; text: "Solve" }
     }
 };
 
 
 void updateInductance(Widget main)
 {
-    auto a_l = getInput!double(main, "a_lInput");
-    auto turns = getInput!double(main, "turnsInput");
+    auto a_l = main.getInput!double("a_lInput");
+    auto turns = main.getInput!double("turnsInput");
 
     auto newL = ToroidInductance(a_l, turns);
 
@@ -77,6 +91,11 @@ void updateInductance(Widget main)
     main.childById!TextWidget("reactanceOutput").text = newX_L.johms.to!dstring;
     main.childById!TextWidget("capacitanceOutput").text = 
         newC.nanofarads.to!dstring;
+
+    auto inputC = getInput!double(main, "capacitanceInput").nanofarads;
+    auto resF = ResonantFrequency(newL, inputC);
+    main.childById!TextWidget("frequencyOutput").text = 
+        resF.megahertz.to!dstring;
 }
 
 void solveInductance(Widget main)
@@ -100,13 +119,29 @@ void solveReactance(Widget main)
     main.childById!EditLine("turnsInput").text = turns.to!dstring;
 }
 
+void solveFrequency(Widget main)
+{
+    auto f = main.getInput!double("frequencyInput").megahertz;
+    auto c = main.getInput!double("capacitanceInput").nanofarads;
+
+    auto x_l = ResonantInductance(c, f);
+
+    main.childById!EditLine("inductanceInput").text = 
+        x_l.microhenries.to!dstring;
+}
+
 bool showInductorWindow(Window mainWin)
 {
     auto win = Platform.instance.createWindow("Inductor Calc", mainWin);   
     win.mainWidget = parseML(inductor_window_ml);
     auto mw = win.mainWidget;
 
-    static foreach(id; ["a_lInput", "turnsInput", "frequencyInput"]) {
+    static foreach(id; [
+            "a_lInput", 
+            "turnsInput", 
+            "frequencyInput",
+            "capacitanceInput"
+    ]) {
         mw.childById!EditLine(id).contentChange = 
             new EditableContentChangeWrapper!(void delegate())(delegate() {
                 updateInductance(mw);
@@ -119,6 +154,11 @@ bool showInductorWindow(Window mainWin)
     };
     mw.childById!Button("solveFromReactance").click = delegate(Widget w) {
         solveReactance(mw);
+        return true;
+    };
+    mw.childById!Button("solveFromFrequency").click = delegate(Widget w) {
+        solveFrequency(mw);
+        solveInductance(mw);
         return true;
     };
     win.show();

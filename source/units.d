@@ -62,6 +62,11 @@ double rad_s(Frequency f)
     return 2 * PI * f.hertz;
 }
 
+Frequency rad_s(double f)
+{
+    return (f / (2 * PI)).hertz;
+}
+
 unittest {
     static assert(is(typeof(200.megahertz) == Frequency));
     static assert(is(typeof(200.nanohenries) == Inductance));

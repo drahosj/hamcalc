@@ -37,6 +37,16 @@ Capacitance ResonantCapacitance(Inductance l, Frequency f)
     return (1.0 / (pow(f.rad_s, 2) * l.henries)).farads;
 }
 
+Inductance ResonantInductance(Capacitance c, Frequency f)
+{
+    return (1.0 / (pow(f.rad_s, 2) * c.farads)).henries;
+}
+
+Frequency ResonantFrequency(Inductance l, Capacitance c)
+{
+    return (1.0/sqrt(l.henries * c.farads)).rad_s;
+}
+
 unittest {
     import std.stdio;
     writeln("A_L = 11 nH/turns^2");
