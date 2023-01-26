@@ -8,5 +8,14 @@
 	},
 	"description": "Multipurpose RF/Electronics Calculator",
 	"license": "BSD 2-Clause",
-	"name": "hamcalc"
+	"name": "hamcalc",
+    "configurations": [
+        {
+            "name": "static",
+            "dflags": [
+                "-link-defaultlib-shared=false",
+                "-static"
+            ]
+        }
+    ]
 }
