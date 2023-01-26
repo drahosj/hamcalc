@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/hamcalc
+hamcalc.so
+hamcalc.dylib
+hamcalc.dll
+hamcalc.a
+hamcalc.lib
+hamcalc-test-*
+*.exe
+*.o
+*.obj
+*.lst

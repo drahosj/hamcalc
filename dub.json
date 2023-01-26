@@ -1,0 +1,12 @@
+{
+	"authors": [
+		"Jake"
+	],
+	"copyright": "Copyright © 2023, Jake",
+	"dependencies": {
+		"dlangui": "~>0.10.2"
+	},
+	"description": "Multipurpose RF/Electronics Calculator",
+	"license": "BSD 2-Clause",
+	"name": "hamcalc"
+}
